@@ -1,11 +1,14 @@
 const canvas = document.getElementById('canvas1');
 const ctx = canvas.getContext('2d');
+
 let restart = document.getElementById('restartbtn');
 let pause = document.getElementById('pausebtn');
+document.getElementById('bestscore').innerText = 'Best: 0';
 canvas.width = 800;
 canvas.height = 500;
 
 let score = 0;
+let best = 0;
 let scale = 1;
 let gameFrame = 0;
 let thread = -1;
@@ -75,7 +78,7 @@ class Entity{
         const rdy = ry - this.y;
         if (Math.sqrt(rdx*rdx + rdy*rdy) > 4*this.r)
         {
-            const v = 4 * this.r/Math.sqrt(rdx*rdx + rdy*rdy);
+            const v = 8 * this.r/Math.sqrt(rdx*rdx + rdy*rdy);
             this.nx = this.x + v*rdx;
             this.ny = this.y + v*rdy;
         }
@@ -94,14 +97,14 @@ class Entity{
             this.y = Math.random() <= 0.5 ? 0 : canvas.height;
         }
         
-        this.r = (Math.random() * 10 + Math.round(player.r) - 5)/scale;
+        this.r = Math.random() * 10 + Math.round(player.r) - 5;
         this.speed = this.r * 2;
         this.distance;
         this.distcal();
+        this.color = 'blue';
         
     }
-    update(){
-        
+    move(){
         const dx = this.x - this.nx;
         const dy = this.y - this.ny;
 
@@ -119,10 +122,13 @@ class Entity{
         const px = this.x - player.x;
         const py = this.y - player.y;
         this.distance = Math.sqrt(px*px + py*py);
+    }
+    update(){
+        this.move();        
         
     }
     draw(){
-        ctx.fillStyle = 'blue';
+        ctx.fillStyle = this.color;
         ctx.beginPath();
         ctx.arc(this.x,this.y, this.r, 0, Math.PI * 2);
         ctx.fill();
@@ -131,18 +137,10 @@ class Entity{
     }
 }
 
-function scaleup(){
-    
-    scale++;
-    player.r /= scale;
-    player.speed = player.r*2;
-    for (let i = 0; i < entities.length; i++){
-        entities[i].r /= scale;
-        entities.speed = entities[i].r*2;
-    
-    }
-    
-}
+const eaten1 = document.createElement('audio');
+eaten1.src = 'sound/bite1.ogg';
+const eaten2 = document.createElement('audio');
+eaten2.src = 'sound/bite2.ogg';
 
 function entitySpawn(){
     if (gameFrame % 50 == 0 && entities.length<20){
@@ -151,17 +149,22 @@ function entitySpawn(){
     for (let i = 0; i < entities.length; i++){
         entities[i].update();
         entities[i].draw();
-    
+        
         if (entities[i].distance < entities[i].r + player.r){
             if (entities[i].r>player.r) gameOver = true;
             
             else if (entities[i].r < player.r){
+                if (Math.random() <= 0.5) eaten1.play();
+                else eaten2.play();
+                
                 player.r += entities[i].r/player.r;
                 console.log(player.r);
                 entities.splice(i, 1);
                 score++;
                 i--;
                 player.speed = player.r * 2;
+                dummy.r = player.r;
+                dummy.speed = player.speed;
             }
             
         }
@@ -171,24 +174,49 @@ function entitySpawn(){
 const entities = [];
 let player = new Player();
 
-function lose(){
+function scaleup(){
     
+    scale++;
+    
+    player.r /= 5;
+    player.speed = player.r*2;
+    for (let i = 0; i < entities.length; i++){
+        entities[i].r /= 5;
+        entities.speed = entities[i].r*2;
+    }
+    
+   
+}
+
+function lose(){
+    //console.log(best);
+    if (score > best){
+        best = score;
+        document.getElementById('bestscore').innerText = 'Best:' + best;
+    } 
+    pause.removeEventListener('click', stop);
     ctx.fillStyle = 'black';
     ctx.fillText('You lose!', canvas.width/2 - 75, canvas.height/2);
 }
 
 function animate(){
 
-    if (!gameOver){
+    if (gameOver) lose();
+
+    else if (gamePause) ;
+
+    else {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         entitySpawn();
         player.update();
         player.draw();
+        test();
         ctx.fillStyle = 'black';
         ctx.fillText('Score: ' + score, 10, 50);
         gameFrame++;
-        if (score>0 && score%50==0){
-            thread = gameFrame + 500;
+
+        if (score>0 && score%50==0 && thread == -1){
+            thread = gameFrame + 250;
             scaleup();
         }
         if (thread != gameFrame && thread!=-1){
@@ -197,7 +225,7 @@ function animate(){
         else if (thread == gameFrame) thread = -1;
         
     }
-    else lose();
+    
     requestAnimationFrame(animate);
 }
 
@@ -211,20 +239,30 @@ function reset(){
     mouse.y = canvas.height/2;
     player = new Player();
     console.log(player);
+    pause.addEventListener('click', stop);
 }
 
 function stop(){
     gamePause = !gamePause;
-    r
+    if (gamePause){
+        document.getElementById('pauseimg').src = 'images/resume.png';
+        ctx.fillText("Paused", canvas.width/2 - 75, canvas.height/2);
+    }
+    else{
+        document.getElementById('pauseimg').src = 'images/pause.png';
+    } 
 }
 
 window.addEventListener('resize', function(){
     canvasPos = canvas.getBoundingClientRect();
 })
+
 pause.addEventListener('click', stop);
 restart.addEventListener('click', reset);
 console.log(player);
 
 
 animate();
+
+
 
