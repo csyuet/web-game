@@ -1,5 +1,5 @@
 # Web-game
-A web mini-game for learning Javascript and CSS.
+Current small project for learning Javascript and CSS.
 # How to play
 - A red ball will move towards the location left clicked by the player.
 - The red ball will capture the balls that are smaller than itself and gains its size.
