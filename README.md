@@ -1,4 +1,8 @@
-# web-game
-a web game to learn Javascript and CSS
+# Web-game
+A web mini-game for learn Javascript and CSS.
+# How to play
+- A red ball will move towards the location left clicked by the player.
+- The red ball will capture the balls that are smaller than itself and gains its size.
+- The red ball will also be eaten by larger balls. Once eaten by the others, the game is over.
 
-The player is a red ball. Eat the blue balls to gain score.
+This mini-game is inspired by <a href="https://agar.io"> Agar.io</a>
