@@ -4,12 +4,18 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Game</title>  
-        <link rel="stylesheet" href="style.css">     
+        <link rel="stylesheet" href="style.css">   
     </head>
     <body>
-        <canvas id="canvas1"></canvas>
-        <button id="restartbtn">Restart</button>
-        <button id="pausebtn">Pause</button>
-        <script src="script.js"></script>
+        <div class="game">
+            <p id="bestscore">Best: 0</p>
+
+            <canvas id="canvas1"></canvas>
+            <div class="btns">
+                <button id="restartbtn"><img src="images/restart.png" alt="Restart" width="50" height="50"></button>
+                <button id="pausebtn"><img id="pauseimg" src="images/pause.png" alt="Pause" width="50" height="50"></button>
+            </div>
+            <script src="script.js"></script>
+        </div>
     </body>
 </html>
