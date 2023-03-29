@@ -163,8 +163,7 @@ function entitySpawn(){
                 score++;
                 i--;
                 player.speed = player.r * 2;
-                dummy.r = player.r;
-                dummy.speed = player.speed;
+             
             }
             
         }
@@ -177,7 +176,6 @@ let player = new Player();
 function scaleup(){
     
     scale++;
-    
     player.r /= 5;
     player.speed = player.r*2;
     for (let i = 0; i < entities.length; i++){
